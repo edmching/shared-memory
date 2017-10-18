@@ -27,6 +27,7 @@ class MazeUI {
   // previous positions of runners
   int lastpos_[MAX_RUNNERS][2];
   int exit_[2];   // exit location
+  bool noExit = false;
 
  public:
 
@@ -49,6 +50,36 @@ class MazeUI {
     //===========================================================
     // TODO: SEARCH MAZE FOR EXIT LOCATION
     //===========================================================
+	int i = 0;
+	int j = 0;
+	std::unique_lock<cpen333::process::mutex> superlock(mutex_);
+	while (memory_->minfo.maze[i][j] != 'E' && noExit == false)
+	{	
+		if (i < memory_->minfo.rows)
+		{
+			i++;
+			superlock.unlock();
+		}
+		else if (i < memory_->minfo.rows)
+		{
+			superlock.lock();
+			j++;
+			superlock.unlock();
+		}
+		else 
+		{
+			std::cout << "Error: No Exit location" << std::endl;
+			noExit = true;
+
+		}
+	}
+	if (noExit != true)
+	{
+		superlock.lock();
+		exit_[COL_IDX] = i;
+		exit_[ROW_IDX] = j;
+		superlock.unlock();
+	}
 
   }
 
