@@ -52,33 +52,25 @@ class MazeUI {
     //===========================================================
 	int i = 0;
 	int j = 0;
-	std::unique_lock<cpen333::process::mutex> superlock(mutex_);
-	while (memory_->minfo.maze[i][j] != 'E' && noExit == false)
-	{	
-		if (i < memory_->minfo.rows)
-		{
+
+	MazeInfo& maze_minfo = memory_->minfo;
+	while (maze_minfo.maze[i][j] != EXIT_CHAR && noExit == false)
+	{
+
+		if (i < maze_minfo.cols)
 			i++;
-			superlock.unlock();
-		}
-		else if (i < memory_->minfo.rows)
-		{
-			superlock.lock();
+		else if (i < maze_minfo.rows)
 			j++;
-			superlock.unlock();
-		}
 		else 
 		{
-			std::cout << "Error: No Exit location" << std::endl;
 			noExit = true;
-
+			std::cout << "Error: No Exit location" << std::endl;
 		}
 	}
 	if (noExit != true)
 	{
-		superlock.lock();
 		exit_[COL_IDX] = i;
 		exit_[ROW_IDX] = j;
-		superlock.unlock();
 	}
 
   }
@@ -117,7 +109,9 @@ class MazeUI {
    */
   void draw_runners() {
 
+	std::unique_lock<cpen333::process::mutex> superlock(mutex_);
     RunnerInfo& rinfo = memory_->rinfo;
+	superlock.unlock();
 
     // draw all runner locations
     for (size_t i=0; i<rinfo.nrunners; ++i) {
@@ -163,7 +157,7 @@ class MazeUI {
    */
   bool quit() {
     // check if we need to quit
-    return memory_->quit;
+	  return memory_->quit;
   }
 
   ~MazeUI(){
