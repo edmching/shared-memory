@@ -47,8 +47,6 @@ class MazeRunner {
     // current location
     int c = loc_[COL_IDX];
     int r = loc_[ROW_IDX];
-	int new_col;
-	int new_row;
 
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
@@ -60,28 +58,27 @@ class MazeRunner {
 	for (i = -1; i < 2; i++)
 	{
 		for (j = -1; j < 2; j++) {
+
+			if (memory_->quit == true)
+				return -1;
 			if (minfo_.maze[c + i][r + j] == EMPTY_CHAR )
 			{ 
-				new_col = c + i;
-				new_row = r + j;
+				memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
+				memory_->rinfo.rloc[idx_][ROW_IDX] = r + j;
 				break;
 			}
 			if (minfo_.maze[c + i][r + j] == EXIT_CHAR)
 			{
-				new_col = c + i;
-				new_row = r + j; 
+				memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
+				memory_->rinfo.rloc[idx_][COL_IDX] = r + j;
 				return 1;
 			}
-			if (memory_->quit == true)
-				return -1;
+
 		}
-		if (memory_->quit == true)
-			return -1;
 		if (minfo_.maze[c + i][r + j] == EMPTY_CHAR)
 			break;
 	}
-	memory_->rinfo.rloc[idx_][COL_IDX] = new_col;
-	memory_->rinfo.rloc[idx_][ROW_IDX] = new_row;
+
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	
 
