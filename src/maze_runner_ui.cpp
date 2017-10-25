@@ -79,8 +79,8 @@ class MazeUI {
    * Draws the maze itself
    */
   void draw_maze() {
-    static const char WALL = 219;  // WALL character
-    static const char EXIT = 176;  // EXIT character
+    static const char WALL = 219;  // WALL character, or change to 'X' if trouble printing
+    static const char EXIT = 176;  // EXIT character, or change to 'E' if trouble printing
 
     MazeInfo& minfo = memory_->minfo;
     RunnerInfo& rinfo = memory_->rinfo;
@@ -102,6 +102,7 @@ class MazeUI {
         }
       }
     }
+    fflush(stdout);  // force output buffer to flush 
   }
 
   /**
@@ -149,6 +150,8 @@ class MazeUI {
         }
       }
     }
+    fflush(stdout);  // force output buffer to flush
+    
   }
 
   /**
