@@ -27,7 +27,6 @@ class MazeUI {
   // previous positions of runners
   int lastpos_[MAX_RUNNERS][2];
   int exit_[2];   // exit location
-  bool noExit = false;
 
  public:
 
@@ -36,6 +35,7 @@ class MazeUI {
     // clear display and hide cursor
     display_.clear_all();
     display_.set_cursor_visible(false);
+
 
     // initialize last known runner positions
     for (size_t i=0; i<MAX_RUNNERS; ++i) {
@@ -50,37 +50,33 @@ class MazeUI {
     //===========================================================
     // TODO: SEARCH MAZE FOR EXIT LOCATION
     //===========================================================
-	int i = 0;
-	int j = 0;
-
+	int i;
+	int j;
 	MazeInfo& maze_minfo = memory_->minfo;
-	while (maze_minfo.maze[i][j] != EXIT_CHAR && noExit == false)
+	for (i = 0; i < maze_minfo.cols; i++)
 	{
-
-		if (i < maze_minfo.cols)
-			i++;
-		else if (i < maze_minfo.rows)
-			j++;
-		else 
+		for (j = 0; j < maze_minfo.rows; j++)
 		{
-			noExit = true;
-			std::cout << "Error: No Exit location" << std::endl;
+			if (maze_minfo.maze[i][j] == EXIT_CHAR)
+			{
+				exit_[COL_IDX] = i; //the array was implemented col first then rows
+				exit_[ROW_IDX] = j;
+				break; // get out of loop one
+			}
 		}
+		if (maze_minfo.maze[i][j] == EXIT_CHAR)
+			break;
 	}
-	if (noExit != true)
-	{
-		exit_[COL_IDX] = i;
-		exit_[ROW_IDX] = j;
-	}
-
+	std::printf("%i\n", exit_[ROW_IDX]);
+	std::printf("%i\n", exit_[COL_IDX]);
   }
 
   /**
    * Draws the maze itself
    */
   void draw_maze() {
-    static const char WALL = 219;  // WALL character, or change to 'X' if trouble printing
-    static const char EXIT = 176;  // EXIT character, or change to 'E' if trouble printing
+    static const char WALL = WALL_CHAR;  // WALL character, or change to 'X' if trouble printing
+    static const char EXIT = EXIT_CHAR;  // EXIT character, or change to 'E' if trouble printing
 
     MazeInfo& minfo = memory_->minfo;
     RunnerInfo& rinfo = memory_->rinfo;

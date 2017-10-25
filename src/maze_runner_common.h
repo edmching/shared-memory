@@ -29,6 +29,7 @@ struct SharedData {
   MazeInfo minfo;    // maze info
   RunnerInfo rinfo;  // runner info
   bool quit;         // tell everyone to quit
+  int magic;		//magic number for detecting initalization
 };
 
 #endif //LAB4_MAZE_RUNNER_COMMON_H

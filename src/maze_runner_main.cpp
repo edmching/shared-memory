@@ -79,9 +79,9 @@ int main(int argc, char* argv[]) {
   //===============================================================
   //  TODO:  CREATE SHARED MEMORY AND INITIALIZE IT
   //===============================================================
-  cpen333::process::shared_object<SharedData> maze0_data("lab 4 maze 0"); //uses the SharedData struct
+  cpen333::process::shared_object<SharedData> maze0_data(MAZE_MEMORY_NAME); //uses the SharedData struct
   load_maze(maze, maze0_data->minfo);
-  init_runners(maze0_data->minfo, maze0_data->rinfo);	
+  init_runners(maze0_data->minfo, maze0_data->rinfo);
 
   std::cout << "Keep this running until you are done with the program." << std::endl << std::endl;
   std::cout << "Press ENTER to quit." << std::endl;
