@@ -83,9 +83,17 @@ class MazeRunner {
 
 int main() {
 
-	cpen333::process::shared_object<SharedData> memory_(MAZE_MEMORY_NAME);
+  cpen333::process::shared_object<SharedData> memory_(MAZE_MEMORY_NAME);
+  cpen333::process::mutex mutex_(MAZE_MUTEX_NAME);
+
+  int magic;
+  {
+	std::lock_guard<decltype(mutex_)> mutex(mutex_);
+	magic = memory_->magic;
+  }
+
   //check for initialization
-  if (memory_->magic == 604123)
+  if (magic == 604123)
   {
 	 MazeRunner runner;
 	 runner.go();
