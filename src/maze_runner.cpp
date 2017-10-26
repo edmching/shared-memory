@@ -5,6 +5,7 @@
 #include <cstring>
 #include <chrono>
 #include <thread>
+#include <random>
 
 class MazeRunner {
 
@@ -47,44 +48,34 @@ class MazeRunner {
 	  // current location
 	  int c = loc_[COL_IDX];
 	  int r = loc_[ROW_IDX];
+	  int new_col;
+	  int new_row;
 
 	  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
 	  //==========================================================
 	  // TODO: NAVIGATE MAZE
 	  //==========================================================
-	  int i;
-	  int j;
-	  while (1) {
-		  for (i = -1; i < 2; i++)
-		  {
-			  for (j = -1; j < 2; j++) {
-
-				  if (memory_->quit == true)
-					  return -1;
-				  if (minfo_.maze[c + i][r + j] == EMPTY_CHAR)
-				  {
-					  memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
-					  memory_->rinfo.rloc[idx_][ROW_IDX] = r + j;
-					  std::cout << "found new spot! moved:" << i << "," << j << std::endl;
-					  break;
-				  }
-				  if (minfo_.maze[c + i][r + j] == EXIT_CHAR)
-				  {
-					  memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
-					  memory_->rinfo.rloc[idx_][COL_IDX] = r + j;
-					  return 1;
-				  }
-
-			  }
-			  if (minfo_.maze[c + i][r + j] == EMPTY_CHAR)
-				  break;
-		  }
-	 }
-  
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	
+	  std::default_random_engine rnd(
+		   (int)std::chrono::system_clock::now().time_since_epoch().count());
+	  std::uniform_int_distribution<int> rdist(-1, 1);
+	  std::uniform_int_distribution<int> cdist(-1, 1);
 
+	  for(int i = 0; i<1000; ++i) {
+		  new_col = c + cdist(rnd);
+		  new_row = r + rdist(rnd);
+		  if (minfo_.maze[new_col][new_row] == EMPTY_CHAR) {
+			  memory_->rinfo.rloc[idx_][COL_IDX] = new_col;
+			  memory_->rinfo.rloc[idx_][ROW_IDX] = new_row;
+		  }
+		  if (memory_->quit == true)
+			  return -1;
+		  if (minfo_.maze[new_col][new_row] == EXIT_CHAR)
+			  return 1;
+
+	  }
+	  std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // failed to find exit
     return 0;
   }
