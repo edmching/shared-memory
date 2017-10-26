@@ -83,7 +83,7 @@ int main(int argc, char* argv[]) {
   maze0_data->magic = 604123;
   load_maze(maze, maze0_data->minfo);
   init_runners(maze0_data->minfo, maze0_data->rinfo);
-
+ 
   std::cout << "Keep this running until you are done with the program." << std::endl << std::endl;
   std::cout << "Press ENTER to quit." << std::endl;
   std::cin.get();
