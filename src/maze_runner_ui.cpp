@@ -32,10 +32,15 @@ class MazeUI {
 
   MazeUI() : display_(), memory_(MAZE_MEMORY_NAME), mutex_(MAZE_MUTEX_NAME){
 
+	//check for initialization
+	if (memory_->magic != 604123)
+	{
+		std::cout << "Error Maze_runner_main not initialized" << std::endl;
+		memory_->quit = true;
+	}
     // clear display and hide cursor
     display_.clear_all();
     display_.set_cursor_visible(false);
-
 
     // initialize last known runner positions
     for (size_t i=0; i<MAX_RUNNERS; ++i) {
@@ -75,8 +80,8 @@ class MazeUI {
    * Draws the maze itself
    */
   void draw_maze() {
-    static const char WALL = WALL_CHAR;  // WALL character, or change to 'X' if trouble printing
-    static const char EXIT = EXIT_CHAR;  // EXIT character, or change to 'E' if trouble printing
+    static const char WALL = 219;  // WALL character, or change to 'X' if trouble printing
+    static const char EXIT = 176;  // EXIT character, or change to 'E' if trouble printing
 
     MazeInfo& minfo = memory_->minfo;
     RunnerInfo& rinfo = memory_->rinfo;
@@ -106,6 +111,7 @@ class MazeUI {
    */
   void draw_runners() {
 
+	// protect the runner info when saving a copy
 	std::unique_lock<cpen333::process::mutex> superlock(mutex_);
     RunnerInfo& rinfo = memory_->rinfo;
 	superlock.unlock();
@@ -168,15 +174,23 @@ class MazeUI {
 
 int main() {
 
-  // initialize previous locations of characters
-  MazeUI ui;
-  ui.draw_maze();
+	cpen333::process::shared_object<SharedData> memory_(MAZE_MEMORY_NAME);
+	//check for initialization
+	if (memory_->magic == 604123)
+	{
+		// initialize previous locations of characters
+		MazeUI ui;
+		ui.draw_maze();
 
-  // continue looping until main program has quit
-  while(!ui.quit()) {
-    ui.draw_runners();
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
-  }
+		// continue looping until main program has quit
+		while (!ui.quit()) {
+			ui.draw_runners();
+			std::this_thread::sleep_for(std::chrono::milliseconds(100));
+		}
 
+	}
+	else {
+		std::cout << "Error Maze_runner_main not initialized" << std::endl;
+	}
   return 0;
 }

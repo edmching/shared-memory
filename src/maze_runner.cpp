@@ -23,7 +23,6 @@ class MazeRunner {
 
   MazeRunner() : memory_(MAZE_MEMORY_NAME), mutex_(MAZE_MUTEX_NAME),
                  minfo_(), idx_(0), loc_() {
-
     // copy maze contents
     minfo_ = memory_->minfo;
 
@@ -35,7 +34,7 @@ class MazeRunner {
     }
 
     // get current location
-    loc_[COL_IDX] = memory_->rinfo.rloc[idx_][COL_IDX];
+    loc_[COL_IDX] = memory_->rinfo.rloc[idx_][COL_IDX];//since idx is already set from before; so we dont need a mutex
     loc_[ROW_IDX] = memory_->rinfo.rloc[idx_][ROW_IDX];
 
   }
@@ -68,14 +67,14 @@ class MazeRunner {
 		  if (minfo_.maze[new_col][new_row] == EMPTY_CHAR) {
 			  memory_->rinfo.rloc[idx_][COL_IDX] = new_col;
 			  memory_->rinfo.rloc[idx_][ROW_IDX] = new_row;
+			  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 		  }
 		  if (memory_->quit == true)
 			  return -1;
 		  if (minfo_.maze[new_col][new_row] == EXIT_CHAR)
 			  return 1;
-
 	  }
-	  std::this_thread::sleep_for(std::chrono::milliseconds(100));
+
     // failed to find exit
     return 0;
   }
@@ -84,8 +83,15 @@ class MazeRunner {
 
 int main() {
 
-  MazeRunner runner;
-  runner.go();
-
+	cpen333::process::shared_object<SharedData> memory_(MAZE_MEMORY_NAME);
+  //check for initialization
+  if (memory_->magic == 604123)
+  {
+	 MazeRunner runner;
+	 runner.go();
+  }
+  else {
+	  std::cout << "Error Maze_runner_main not initialized" << std::endl;
+  }
   return 0;
 }
