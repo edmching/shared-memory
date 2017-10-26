@@ -44,41 +44,44 @@ class MazeRunner {
    * @return 1 for success, 0 for failure, -1 to quit
    */
   int go() {
-    // current location
-    int c = loc_[COL_IDX];
-    int r = loc_[ROW_IDX];
+	  // current location
+	  int c = loc_[COL_IDX];
+	  int r = loc_[ROW_IDX];
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+	  std::this_thread::sleep_for(std::chrono::milliseconds(100));
 
-    //==========================================================
-    // TODO: NAVIGATE MAZE
-    //==========================================================
-	int i;
-	int j;
-	for (i = -1; i < 2; i++)
-	{
-		for (j = -1; j < 2; j++) {
+	  //==========================================================
+	  // TODO: NAVIGATE MAZE
+	  //==========================================================
+	  int i;
+	  int j;
+	  while (1) {
+		  for (i = -1; i < 2; i++)
+		  {
+			  for (j = -1; j < 2; j++) {
 
-			if (memory_->quit == true)
-				return -1;
-			if (minfo_.maze[c + i][r + j] == EMPTY_CHAR )
-			{ 
-				memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
-				memory_->rinfo.rloc[idx_][ROW_IDX] = r + j;
-				break;
-			}
-			if (minfo_.maze[c + i][r + j] == EXIT_CHAR)
-			{
-				memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
-				memory_->rinfo.rloc[idx_][COL_IDX] = r + j;
-				return 1;
-			}
+				  if (memory_->quit == true)
+					  return -1;
+				  if (minfo_.maze[c + i][r + j] == EMPTY_CHAR)
+				  {
+					  memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
+					  memory_->rinfo.rloc[idx_][ROW_IDX] = r + j;
+					  std::cout << "found new spot! moved:" << i << "," << j << std::endl;
+					  break;
+				  }
+				  if (minfo_.maze[c + i][r + j] == EXIT_CHAR)
+				  {
+					  memory_->rinfo.rloc[idx_][COL_IDX] = c + i;
+					  memory_->rinfo.rloc[idx_][COL_IDX] = r + j;
+					  return 1;
+				  }
 
-		}
-		if (minfo_.maze[c + i][r + j] == EMPTY_CHAR)
-			break;
-	}
-
+			  }
+			  if (minfo_.maze[c + i][r + j] == EMPTY_CHAR)
+				  break;
+		  }
+	 }
+  
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	
 
